@@ -95,41 +95,22 @@ If the file shows strong non-Bitcoin or mixed-network signals, LockScope will st
 - RPC address verification is UTXO-focused; full historical TX verification through RPC depends on `txindex`.
 
 
-## Example usage
+### Examples
 
-Analyze a wallet locally and print the human-readable report:
-
-```powershell
-lockscope wallet.dat
-```
-
-Analyze a modern descriptor wallet and emit JSON:
-
-```powershell
+```bash
+# Analyze a modern descriptor wallet and emit JSON:
 lockscope wallet.dat --json
-```
 
-Verify on-chain data using the default Esplora-compatible explorer backend:
-
-```powershell
+# Verify on-chain data using the default Esplora-compatible explorer backend:
 lockscope wallet.dat --verify-chain
-```
 
-Verify on-chain data against a different Esplora-compatible site:
-
-```powershell
+# Verify on-chain data against a different Esplora-compatible site:
 lockscope wallet.dat --verify-chain --chain-backend explorer --explorer-url https://mempool.space/api
-```
 
-Verify on-chain data through a local Bitcoin Core RPC node using cookie auth:
-
-```powershell
+# Verify on-chain data through a local Bitcoin Core RPC node using cookie auth:
 lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-cookie X:\crypto\bitcoin\data\.cookie
-```
 
-Verify on-chain data through a local Bitcoin Core RPC node using username/password:
-
-```powershell
+# Verify on-chain data through a local Bitcoin Core RPC node using username/password:
 lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0.1:8332 --rpc-user bitcoinrpc --rpc-pass yourpassword
 ```
 
