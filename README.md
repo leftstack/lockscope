@@ -36,11 +36,17 @@ LockScope performs structural and forensic checks such as:
 - expected encrypted key sizes
 - duplicate encrypted key record detection
 - ciphertext entropy checks to catch zeroed or fabricated key blobs
-- public key format validation
+- full secp256k1 public key validation
 - `defaultkey` consistency checks for legacy wallets
 - descriptor cache / active script reference consistency for descriptor wallets
+- descriptor ID verification against literal descriptor strings
 - labeled-address ownership checks against wallet keys or wallet descriptors
 - transaction timestamp sanity checks
+- stored transaction `txid` recomputation from raw wallet transaction bytes
+- Bitcoin Core-aligned checksum / hash verification for legacy `key` and `ckey` records when present
+- SQLite `PRAGMA quick_check` / `integrity_check` for descriptor wallets
+- SQLite rollback journal presence reporting (`wallet.dat-journal`)
+- funded-but-likely-unspendable detection during on-chain verification, based on local key / descriptor evidence
 
 The output is designed to be readable for manual review, while `--json` makes it usable from scripts and pipelines.
 
@@ -62,8 +68,18 @@ Current chain verification covers:
 - TXID existence / confirmation lookup
 - address activity and balance via explorer APIs
 - current UTXO/balance verification via Bitcoin Core RPC `scantxoutset`
+- local spendability evidence for funded addresses, so a balance can be flagged as likely unspendable if matching local key material is missing
 
 When using the RPC backend, historical arbitrary TX lookups depend on Bitcoin Core `txindex=1`. If `txindex` is disabled or still syncing, LockScope warns and marks those TX lookups as unknown instead of falsely reporting them missing.
+
+Chain verification has two modes:
+
+- `--verify-chain`
+  Uses the lightweight target set. For legacy wallets this means labeled addresses plus `defaultkey` derivations. For descriptor wallets this means labeled addresses only.
+- `--verify-chain-expanded[=N]`
+  Expands verification to a broader owned-address set. For legacy wallets this includes derived key-backed scripts. For descriptor wallets this includes derived descriptor-owned addresses up to lookahead `N`. If `N` is omitted, LockScope uses a conservative default.
+
+The expanded mode is more powerful, but it can generate substantially more explorer / RPC traffic.
 
 ## Pre-flight network classification
 
@@ -95,23 +111,32 @@ If the file shows strong non-Bitcoin or mixed-network signals, LockScope will st
 - RPC address verification is UTXO-focused; full historical TX verification through RPC depends on `txindex`.
 
 
-### Examples
-
-```bash
-# Analyze a modern descriptor wallet and emit JSON:
-lockscope wallet.dat --json
-
-# Verify on-chain data using the default Esplora-compatible explorer backend:
-lockscope wallet.dat --verify-chain
-
-# Verify on-chain data against a different Esplora-compatible site:
-lockscope wallet.dat --verify-chain --chain-backend explorer --explorer-url https://mempool.space/api
-
-# Verify on-chain data through a local Bitcoin Core RPC node using cookie auth:
-lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-cookie X:\crypto\bitcoin\data\.cookie
-
 # Verify on-chain data through a local Bitcoin Core RPC node using username/password:
 lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0.1:8332 --rpc-user bitcoinrpc --rpc-pass yourpassword
+
+## Example usage
+
+```bash
+# Analyze a wallet locally and print the human-readable report:
+lockscope wallet.dat
+
+# Analyze a modern descriptor wallet and emit JSON:
+lockscope X:\path\to\wallet.dat --json
+
+# Verify on-chain data using the default Esplora-compatible explorer backend:
+lockscope X:\path\to\wallet.dat --verify-chain
+
+# Verify on-chain data using broader owned-address expansion with a conservative lookahead:
+lockscope X:\path\to\wallet.dat --verify-chain-expanded 8
+
+# Verify on-chain data against a different Esplora-compatible site:
+lockscope X:\path\to\wallet.dat --verify-chain --chain-backend explorer --explorer-url https://mempool.space/api
+
+# Verify on-chain data through a local Bitcoin Core RPC node using cookie auth:
+lockscope X:\path\to\wallet.dat --verify-chain --chain-backend rpc --rpc-cookie X:\crypto\bitcoin\data\.cookie
+
+# Verify on-chain data through a local Bitcoin Core RPC node using username/password:
+lockscope X:\path\to\wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0.1:8332 --rpc-user bitcoinrpc --rpc-pass yourpassword
 ```
 
 ## Disclaimer
