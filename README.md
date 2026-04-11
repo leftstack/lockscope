@@ -121,22 +121,22 @@ lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0
 lockscope wallet.dat
 
 # Analyze a modern descriptor wallet and emit JSON:
-lockscope X:\path\to\wallet.dat --json
+lockscope wallet.dat --json
 
 # Verify on-chain data using the default Esplora-compatible explorer backend:
-lockscope X:\path\to\wallet.dat --verify-chain
+lockscope wallet.dat --verify-chain
 
 # Verify on-chain data using broader owned-address expansion with a conservative lookahead:
-lockscope X:\path\to\wallet.dat --verify-chain-expanded 8
+lockscope wallet.dat --verify-chain-expanded 8
 
 # Verify on-chain data against a different Esplora-compatible site:
-lockscope X:\path\to\wallet.dat --verify-chain --chain-backend explorer --explorer-url https://mempool.space/api
+lockscope wallet.dat --verify-chain --chain-backend explorer --explorer-url https://mempool.space/api
 
 # Verify on-chain data through a local Bitcoin Core RPC node using cookie auth:
-lockscope X:\path\to\wallet.dat --verify-chain --chain-backend rpc --rpc-cookie X:\crypto\bitcoin\data\.cookie
+lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-cookie X:\crypto\bitcoin\data\.cookie
 
 # Verify on-chain data through a local Bitcoin Core RPC node using username/password:
-lockscope X:\path\to\wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0.1:8332 --rpc-user bitcoinrpc --rpc-pass yourpassword
+lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0.1:8332 --rpc-user bitcoinrpc --rpc-pass yourpassword
 ```
 
 ## Disclaimer
