@@ -110,10 +110,6 @@ If the file shows strong non-Bitcoin or mixed-network signals, LockScope will st
 - It does not currently support every Bitcoin fork as a first-class chain backend.
 - RPC address verification is UTXO-focused; full historical TX verification through RPC depends on `txindex`.
 
-
-# Verify on-chain data through a local Bitcoin Core RPC node using username/password:
-lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0.1:8332 --rpc-user bitcoinrpc --rpc-pass yourpassword
-
 ## Example usage
 
 ```bash
