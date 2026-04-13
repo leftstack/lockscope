@@ -137,6 +137,6 @@ lockscope wallet.dat --verify-chain --chain-backend rpc --rpc-url http://127.0.0
 
 ## Disclaimer
 
-<p style="color: red;"><strong>Important:</strong> There is no known method that can guarantee whether a locked <code>wallet.dat</code> file is authentic or fraudulent from file inspection alone. A wallet can appear structurally valid while still being misleading, incomplete, transplanted from another context, or intentionally prepared to imitate a real Bitcoin Core wallet. Encrypted contents also limit what can be proven without the password, signing ability, or independent provenance.</p>
+There is no known method that can guarantee whether a locked <code>wallet.dat</code> file is authentic or fraudulent from file inspection alone. A wallet can appear structurally valid while still being misleading, incomplete, transplanted from another context, or intentionally prepared to imitate a real Bitcoin Core wallet. Encrypted contents also limit what can be proven without the password, signing ability, or independent provenance.</p>
 
 <p style="color: red;">LockScope is meant to provide better insight into locked <code>wallet.dat</code> files by surfacing structure, consistency signals, and potential red flags. It is not designed to "prove" fraudulence or authenticity.</p>
