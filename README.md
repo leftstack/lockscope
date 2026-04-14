@@ -24,9 +24,14 @@ It can parse and report on:
 - `mkey` master key records
 - `ckey` encrypted private keys
 - plain `key` records when present
+- watch-only records and `watchmeta`
+- legacy wallet feature metadata such as `flags` and `minversion`
+- legacy HD metadata such as `hdchain`, `keymeta`, and `pool`
 - labeled addresses (`name` / `purpose`)
 - stored transactions
+- legacy wallet-transaction metadata stored alongside `tx` records
 - descriptor records and active descriptor script pubkeys in modern wallets
+- Berkeley DB container artifacts such as deleted private-key residue and suspicious overflow-page structure
 
 ## What it checks
 
@@ -38,17 +43,23 @@ LockScope performs structural and forensic checks such as:
 - ciphertext entropy checks to catch zeroed or fabricated key blobs
 - full secp256k1 public key validation
 - `defaultkey` consistency checks for legacy wallets
+- wallet `flags` / `minversion` / version consistency checks
+- watch-only script and `watchmeta` consistency checks
+- `hdchain` / `keymeta` / `pool` linkage and derivation-path consistency checks
 - descriptor cache / active script reference consistency for descriptor wallets
 - descriptor ID verification against literal descriptor strings
 - labeled-address ownership checks against wallet keys or wallet descriptors
 - transaction timestamp sanity checks
 - stored transaction `txid` recomputation from raw wallet transaction bytes
+- stored legacy `CWalletTx` metadata sanity checks, including block-linkage and reserved wallet fields
 - Bitcoin Core-aligned checksum / hash verification for legacy `key` and `ckey` records when present
+- Berkeley DB deleted-key residue scanning for DER / ASN.1 `ECPrivateKey` markers
+- Berkeley DB overflow-cycle detection
 - SQLite `PRAGMA quick_check` / `integrity_check` for descriptor wallets
 - SQLite rollback journal presence reporting (`wallet.dat-journal`)
 - funded-but-likely-unspendable detection during on-chain verification, based on local key / descriptor evidence
 
-The output is designed to be readable for manual review, while `--json` makes it usable from scripts and pipelines.
+The human-readable output is designed for compact manual review, while `--json` preserves full-detail forensic output for scripting and downstream analysis.
 
 ## On-chain verification
 
@@ -75,9 +86,9 @@ When using the RPC backend, historical arbitrary TX lookups depend on Bitcoin Co
 Chain verification has two modes:
 
 - `--verify-chain`
-  Uses the lightweight target set. For legacy wallets this means labeled addresses plus `defaultkey` derivations. For descriptor wallets this means labeled addresses only.
+  Uses the lightweight target set. Active watch-only scripts are always included when they map to standard addresses. For legacy wallets this also includes labeled addresses plus `defaultkey` derivations. For descriptor wallets this otherwise defaults to labeled addresses.
 - `--verify-chain-expanded[=N]`
-  Expands verification to a broader owned-address set. For legacy wallets this includes derived key-backed scripts. For descriptor wallets this includes derived descriptor-owned addresses up to lookahead `N`. If `N` is omitted, LockScope uses a conservative default.
+  Expands verification to a broader owned-address set. For legacy wallets this includes derived key-backed scripts in addition to the lightweight target set. For descriptor wallets this includes derived descriptor-owned addresses up to lookahead `N`. If `N` is omitted, LockScope uses a conservative default.
 
 The expanded mode is more powerful, but it can generate substantially more explorer / RPC traffic.
 
