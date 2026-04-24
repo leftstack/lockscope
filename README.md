@@ -1,6 +1,6 @@
 # LockScope
 
-`lockscope` is a forensic inspection tool for Bitcoin Core wallet files.
+`lockscope` is a forensic inspection tool for wallet files in the Bitcoin family.
 
 It reads locked wallets, extracts the wallet structure, and checks for signs of tampering, corruption, fabricated key material, or misleading metadata. It is aimed at situations where you want to answer questions like:
 
