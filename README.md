@@ -1,5 +1,6 @@
 <div align="center">
 
+  ![screenshot](https://github.com/leftstack/lockscope/blob/main/lockscope.png)
   # LockScope
 
 </div>
